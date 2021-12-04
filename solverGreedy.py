@@ -1,42 +1,98 @@
-import random, time
+import random, time, pprint
 from datParser import *
+from collections import defaultdict
 
 
 class Solver_Greedy():
     def __init__(self, datAttr):
         self.datAttr = datAttr
-        self.sonsG = {}
-        self.sonsH = {}
-
-    def matrix_to_dict(matrix):
-        # Convert the matrix to a dictionary
-        #   Keys are the items
-        #   Values are the items' weights
-        # Return the dictionary
-        for m, i in matrix, len(matrix):
-            if m[i] > 0:
-                self.sonsH
-
-
-
-    def _quality():
-        pass
-    
-    def solve(self):
+        self.pretty = pprint.PrettyPrinter()  # for pretty printing
+        self._graphG = defaultdict(set)
+        self._graphH = defaultdict(set)
+        self._create_graph(datAttr.G, self._graphG)   
+        self._create_graph(datAttr.H, self._graphH)      
         # Initialize the solution
-        solution = []
+        self.solution = []
+        
+    
+    def _create_graph(self, connections, graph):
+        """ Add connections (adjacence matrix) to graph """
+        for i in range(len(connections)):
+            for j in range(len(connections[i])):
+                if connections[i][j] > 0:
+                    self._add(i, j, graph)
+        print("Graph created: ")
+        self.pretty.pprint(graph)
+        #print(f'graph created: {graph}')
+
+    @staticmethod
+    def _add(node1, node2, graph):
+        """ Add connection between node1 and node2 """
+        graph[node1].add(node2)
+        graph[node2].add(node1)
+
+    @staticmethod
+    def _remove(node, graph):
+        """ Remove all references to node """
+        for n, cxns in graph.items():  # python3: items(); python2: iteritems()
+            try:
+                cxns.remove(node)
+            except KeyError:
+                pass
+        try:
+            del graph[node]
+        except KeyError:
+            pass
+
+    def _is_connected(self, node1, node2, graph):
+        """ Is node1 directly connected to node2 """
+
+        return node1 in graph and node2 in graph[node1]
+
+
+    def _find_best_candidate(self):
+        """ Find the best candidate to add to the solution """
+        edge = []
+        if len(self.solution) == 0:
+            min_val = min([len(self._graphH[vertex]) for vertex in self._graphH])
+            res = []
+            for vertex in self._graphH:
+                if len(self._graphH[vertex]) == min_val:
+                    res.append(vertex)
+            vertexh1 = res[0]
+            print(f'candidate: {vertexh1}')
+
+
+            for vertexh2 in self._graphH[vertexh1]:
+                for vertexg1 in self._graphG:
+                    if len(self._graphH[vertexh1]) == len(self._graphG[vertexg1]):
+                        for vertexg2 in self._graphG[vertexg1]:
+                            diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
+                            if diff < diff0:
+                                edge = [vertexh1, vertexh2, vertexg1, vertexg2]
+                            diff0 = diff
+                        
+                
+
+        best_candidate = self.datAttr.candidates[0]
+        for candidate in self.datAttr.candidates:
+            if candidate.weight < best_candidate.weight:
+                best_candidate = candidate
+        return best_candidate
+
+    def solve(self):
         # While solution is not complete
-        while len(solution) < self.datAttr.M:
+        while len(self._graphH) > 0:
             # Find the best item to add
-            best_item = self.datAttr.items[0]
-            for item in self.datAttr.items:
-                if item.weight < best_item.weight:
-                    best_item = item
+            best_item = self._find_best_candidate()
             # Add the best item to the solution
-            solution.append(best_item)
+            self.solution.append(best_item)    
             # Remove the item from the items list
-            self.datAttr.items.remove(best_item)
-        #   Find the best candidate
-        #   Add it to the solution
-        #   Remove it from the candidate list
+            self._remove(best_item, self._graphH)      
         # Return the solution
+
+if __name__ == "__main__":
+    parser = DATParser()
+    datAttr = parser.decode("project.1.dat")
+    solver = Solver_Greedy(datAttr)
+    solver.solve()
