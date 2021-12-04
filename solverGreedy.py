@@ -52,7 +52,7 @@ class Solver_Greedy():
 
     def _find_best_candidate(self):
         """ Find the best candidate to add to the solution """
-        edge = []
+        diff0 = 1
         if len(self.solution) == 0:
             min_val = min([len(self._graphH[vertex]) for vertex in self._graphH])
             res = []
@@ -62,33 +62,44 @@ class Solver_Greedy():
             vertexh1 = res[0]
             print(f'candidate: {vertexh1}')
 
-
-            for vertexh2 in self._graphH[vertexh1]:
+            for vertexg1 in self._graphG:
+                if len(self._graphH[vertexh1]) == len(self._graphG[vertexg1]):
+                    for vertexh2 in self._graphH[vertexh1]:
+                        for vertexg2 in self._graphG[vertexg1]:
+                            if len(self._graphH[vertexh2]) == len(self._graphG[vertexg2]):
+                                diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
+                                if diff <= diff0:
+                                    edge = [vertexh1, vertexh2, vertexg1, vertexg2]
+                                diff0 = diff
+            return edge
+        else:
+            for vertexh1 in self._graphH:
                 for vertexg1 in self._graphG:
                     if len(self._graphH[vertexh1]) == len(self._graphG[vertexg1]):
-                        for vertexg2 in self._graphG[vertexg1]:
-                            diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
-                            if diff < diff0:
-                                edge = [vertexh1, vertexh2, vertexg1, vertexg2]
-                            diff0 = diff
-                        
-                
-
-        best_candidate = self.datAttr.candidates[0]
-        for candidate in self.datAttr.candidates:
-            if candidate.weight < best_candidate.weight:
-                best_candidate = candidate
-        return best_candidate
+                        for vertexh2 in self._graphH[vertexh1]:
+                            for vertexg2 in self._graphG[vertexg1]:
+                                if len(self._graphH[vertexh2]) == len(self._graphG[vertexg2]):
+                                    diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
+                                    if diff <= diff0:
+                                        edge = [vertexh1, vertexh2, vertexg1, vertexg2]
+                                    diff0 = diff
+            return edge
 
     def solve(self):
         # While solution is not complete
         while len(self._graphH) > 0:
             # Find the best item to add
             best_item = self._find_best_candidate()
+            print(f'best item: {best_item}')
             # Add the best item to the solution
             self.solution.append(best_item)    
             # Remove the item from the items list
-            self._remove(best_item, self._graphH)      
+            self._remove(best_item[0], self._graphH)
+            self._remove(best_item[1], self._graphH)
+            self._remove(best_item[2], self._graphG)
+            self._remove(best_item[3], self._graphG)
+            self.pretty.pprint(self._graphH)    
+            self.pretty.pprint(self._graphG)   
         # Return the solution
 
 if __name__ == "__main__":
