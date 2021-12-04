@@ -32,17 +32,15 @@ class Solver_Greedy():
         graph[node2].add(node1)
 
     @staticmethod
-    def _remove(node, graph):
+    def _remove_edge(node1, node2, graph):
         """ Remove all references to node """
-        for n, cxns in graph.items():  # python3: items(); python2: iteritems()
-            try:
-                cxns.remove(node)
-            except KeyError:
-                pass
-        try:
-            del graph[node]
-        except KeyError:
-            pass
+        graph[node1].remove(node2)
+        graph[node2].remove(node1)
+        if len(graph[node1]) == 0:
+            del graph[node1]
+        if len(graph[node2]) == 0:
+            del graph[node2]
+
 
     def _is_connected(self, node1, node2, graph):
         """ Is node1 directly connected to node2 """
@@ -50,56 +48,57 @@ class Solver_Greedy():
         return node1 in graph and node2 in graph[node1]
 
 
-    def _find_best_candidate(self):
+    def _find_best_candidate(self, vertexh1=None):
         """ Find the best candidate to add to the solution """
         diff0 = 1
-        if len(self.solution) == 0:
+        if vertexh1 is None:
             min_val = min([len(self._graphH[vertex]) for vertex in self._graphH])
             res = []
-            for vertex in self._graphH:
+            for vertex in list(self._graphH):
                 if len(self._graphH[vertex]) == min_val:
                     res.append(vertex)
             vertexh1 = res[0]
             print(f'candidate: {vertexh1}')
 
-            for vertexg1 in self._graphG:
-                if len(self._graphH[vertexh1]) == len(self._graphG[vertexg1]):
-                    for vertexh2 in self._graphH[vertexh1]:
-                        for vertexg2 in self._graphG[vertexg1]:
-                            if len(self._graphH[vertexh2]) == len(self._graphG[vertexg2]):
-                                diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
-                                if diff <= diff0:
-                                    edge = [vertexh1, vertexh2, vertexg1, vertexg2]
-                                diff0 = diff
-            return edge
+        for vertexg1 in list(self._graphG):
+            if len(self._graphH[vertexh1]) == len(self._graphG[vertexg1]):
+                for vertexh2 in list(self._graphH[vertexh1]):
+                    for vertexg2 in list(self._graphG[vertexg1]):
+                        if len(self._graphH[vertexh2]) == len(self._graphG[vertexg2]):
+                            diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
+                            if diff <= diff0:
+                                edge = [vertexh1, vertexh2, vertexg1, vertexg2]
+                            diff0 = diff
+        return edge, vertexh1
+        """
         else:
-            for vertexh1 in self._graphH:
-                for vertexg1 in self._graphG:
+            for vertexh1 in list(self._graphH[parent]):
+                for vertexg1 in list(self._graphG):
                     if len(self._graphH[vertexh1]) == len(self._graphG[vertexg1]):
-                        for vertexh2 in self._graphH[vertexh1]:
-                            for vertexg2 in self._graphG[vertexg1]:
+                        for vertexh2 in list(self._graphH[vertexh1]):
+                            for vertexg2 in list(self._graphG[vertexg1]):
                                 if len(self._graphH[vertexh2]) == len(self._graphG[vertexg2]):
                                     diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
                                     if diff <= diff0:
                                         edge = [vertexh1, vertexh2, vertexg1, vertexg2]
                                     diff0 = diff
-            return edge
+            return edge"""
 
     def solve(self):
         # While solution is not complete
+        parent = None
         while len(self._graphH) > 0:
             # Find the best item to add
-            best_item = self._find_best_candidate()
+            best_item, parent = self._find_best_candidate(parent)
             print(f'best item: {best_item}')
             # Add the best item to the solution
             self.solution.append(best_item)    
             # Remove the item from the items list
-            self._remove(best_item[0], self._graphH)
-            self._remove(best_item[1], self._graphH)
-            self._remove(best_item[2], self._graphG)
-            self._remove(best_item[3], self._graphG)
-            self.pretty.pprint(self._graphH)    
-            self.pretty.pprint(self._graphG)   
+            self._remove_edge(best_item[0], best_item[1], self._graphH)
+            self._remove_edge(best_item[2], best_item[3], self._graphG)
+            print(f'solution: {self.solution}')
+            print(f'graphH: {self._graphH}')
+            print(f'graphG: {self._graphG}')
         # Return the solution
 
 if __name__ == "__main__":
