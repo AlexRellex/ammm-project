@@ -13,8 +13,7 @@ class Solver_Greedy():
         self._create_graph(datAttr.H, self._graphH)      
         # Initialize the solution
         self.edges = []
-        self.solution = defaultdict(set)
-        
+        self.solution = defaultdict(set)       
     
     def _create_graph(self, connections, graph):
         """ Add connections (adjacence matrix) to graph """
@@ -37,21 +36,19 @@ class Solver_Greedy():
         """ Remove all references to node """
         graph[node1].remove(node2)
         graph[node2].remove(node1)
-        if len(graph[node1]) == 0 or len(graph[node1]) == set:
-            del graph[node1]
-        if len(graph[node2]) == 0 or len(graph[node2]) == set:
-            del graph[node2]
-
+        for node in list(graph):
+            if len(graph[node]) == 0:
+                del graph[node]
 
     def _is_connected(self, node1, node2, graph):
         """ Is node1 directly connected to node2 """
 
         return node1 in graph and node2 in graph[node1]
 
-
     def _find_best_candidate(self):
         """ Find the best candidate to add to the solution """
         diff0 = 1
+        edge = None
         if len(self.solution) == 0:
             min_val = min([len(self._graphH[vertex]) for vertex in self._graphH])
             res = []
@@ -59,15 +56,15 @@ class Solver_Greedy():
                 if len(self._graphH[vertex]) == min_val:
                     res.append(vertex)
             vertexh1 = res[0]
-            #print(f'vertexh1: {vertexh1}')
+            print(f'vertexh1: {vertexh1}')
             for vertexg1 in list(self._graphG):
-                #print(f'vertexg1: {vertexg1}')
-                if len(self._graphH[vertexh1]) == len(self._graphG[vertexg1]):
+                print(f'vertexg1: {vertexg1}')
+                if len(self._graphH[vertexh1]) <= len(self._graphG[vertexg1]):
                     for vertexh2 in list(self._graphH[vertexh1]):
-                        #print(f'vertexh2: {vertexh2}')
+                        print(f'vertexh2: {vertexh2}')
                         for vertexg2 in list(self._graphG[vertexg1]):
-                            #print(f'vertexg2: {vertexg2}')
-                            if len(self._graphH[vertexh2]) == len(self._graphG[vertexg2]):
+                            print(f'vertexg2: {vertexg2}')
+                            if len(self._graphH[vertexh2]) <= len(self._graphG[vertexg2]):
                                 diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
                                 if diff <= diff0:
                                     edge = [vertexh1, vertexh2, vertexg1, vertexg2]
@@ -77,7 +74,10 @@ class Solver_Greedy():
                                 print(f'Vertex {vertexh2} and {vertexg2} have different #edges')
                 else:
                     print(f'Vertex {vertexh1} and {vertexg1} have different #edges')
-            return edge, diff0
+            if edge is not None:
+                return edge, diff0
+            else:
+                return None, None
         else:
             for vertexh1 in list(self.solution):
                 #print(f'vertexh1: {vertexh1}')
@@ -114,6 +114,8 @@ class Solver_Greedy():
         while len(self._graphH) > 0:
             # Find the best item to add
             best_item, diff = self._find_best_candidate()
+            if best_item is None:
+                return None
             # Add the best item to the solution
             self.edges.append(best_item)
             self.solution[best_item[0]].add(best_item[2])   
@@ -126,10 +128,17 @@ class Solver_Greedy():
             print(f'graphH: {self._graphH}')
             print(f'graphG: {self._graphG}')
             residual += diff
+        return residual
         # Return the solution
 
 if __name__ == "__main__":
     parser = DATParser()
-    datAttr = parser.decode("project.1.dat")
+    datAttr = parser.decode("project.9.dat")
     solver = Solver_Greedy(datAttr)
-    solver.solve()
+    residual = solver.solve()
+    if residual is None:
+        print("\n\nSolution is not possible")
+        print('INFEASIBLE SOLUTION')
+    else:
+        print(f'\n\nSolution found: {list(solver.solution.items())}\n')
+        print(f'Residual for the solution: {residual}')
