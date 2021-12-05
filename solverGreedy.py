@@ -12,7 +12,8 @@ class Solver_Greedy():
         self._create_graph(datAttr.G, self._graphG)   
         self._create_graph(datAttr.H, self._graphH)      
         # Initialize the solution
-        self.solution = []
+        self.edges = []
+        self.solution = defaultdict(set)
         
     
     def _create_graph(self, connections, graph):
@@ -36,9 +37,9 @@ class Solver_Greedy():
         """ Remove all references to node """
         graph[node1].remove(node2)
         graph[node2].remove(node1)
-        if len(graph[node1]) == 0:
+        if len(graph[node1]) == 0 or len(graph[node1]) == set:
             del graph[node1]
-        if len(graph[node2]) == 0:
+        if len(graph[node2]) == 0 or len(graph[node2]) == set:
             del graph[node2]
 
 
@@ -48,57 +49,83 @@ class Solver_Greedy():
         return node1 in graph and node2 in graph[node1]
 
 
-    def _find_best_candidate(self, vertexh1=None):
+    def _find_best_candidate(self):
         """ Find the best candidate to add to the solution """
         diff0 = 1
-        if vertexh1 is None:
+        if len(self.solution) == 0:
             min_val = min([len(self._graphH[vertex]) for vertex in self._graphH])
             res = []
             for vertex in list(self._graphH):
                 if len(self._graphH[vertex]) == min_val:
                     res.append(vertex)
             vertexh1 = res[0]
-            print(f'candidate: {vertexh1}')
-
-        for vertexg1 in list(self._graphG):
-            if len(self._graphH[vertexh1]) == len(self._graphG[vertexg1]):
-                for vertexh2 in list(self._graphH[vertexh1]):
-                    for vertexg2 in list(self._graphG[vertexg1]):
-                        if len(self._graphH[vertexh2]) == len(self._graphG[vertexg2]):
-                            diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
-                            if diff <= diff0:
-                                edge = [vertexh1, vertexh2, vertexg1, vertexg2]
-                            diff0 = diff
-        return edge, vertexh1
-        """
-        else:
-            for vertexh1 in list(self._graphH[parent]):
-                for vertexg1 in list(self._graphG):
-                    if len(self._graphH[vertexh1]) == len(self._graphG[vertexg1]):
-                        for vertexh2 in list(self._graphH[vertexh1]):
-                            for vertexg2 in list(self._graphG[vertexg1]):
-                                if len(self._graphH[vertexh2]) == len(self._graphG[vertexg2]):
-                                    diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
-                                    if diff <= diff0:
-                                        edge = [vertexh1, vertexh2, vertexg1, vertexg2]
+            #print(f'vertexh1: {vertexh1}')
+            for vertexg1 in list(self._graphG):
+                #print(f'vertexg1: {vertexg1}')
+                if len(self._graphH[vertexh1]) == len(self._graphG[vertexg1]):
+                    for vertexh2 in list(self._graphH[vertexh1]):
+                        #print(f'vertexh2: {vertexh2}')
+                        for vertexg2 in list(self._graphG[vertexg1]):
+                            #print(f'vertexg2: {vertexg2}')
+                            if len(self._graphH[vertexh2]) == len(self._graphG[vertexg2]):
+                                diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
+                                if diff <= diff0:
+                                    edge = [vertexh1, vertexh2, vertexg1, vertexg2]
+                                    print(f'considered option edge: {edge} with diff: {diff}')
                                     diff0 = diff
-            return edge"""
+                            else:
+                                print(f'Vertex {vertexh2} and {vertexg2} have different #edges')
+                else:
+                    print(f'Vertex {vertexh1} and {vertexg1} have different #edges')
+            return edge, diff0
+        else:
+            for vertexh1 in list(self.solution):
+                #print(f'vertexh1: {vertexh1}')
+                for vertexg1 in list(self.solution[vertexh1]):
+                    #print(f'vertexg1: {vertexg1}')
+                    if (len(self._graphH[vertexh1]) <= len(self._graphG[vertexg1])) and len(self._graphH[vertexh1]) > 0:
+                        #print(f'Vertex {vertexh1} and {vertexg1} have the SAME #edges')
+                        if ((len(self.solution[vertexh1]) > 0 and vertexg1 in self.solution[vertexh1])) or len(self.solution[vertexh1]) == 0:
+                            for vertexh2 in list(self._graphH[vertexh1]):
+                                #print(f'vertexh2: {vertexh2}')
+                                for vertexg2 in list(self._graphG[vertexg1]):
+                                    #print(f'vertexg2: {vertexg2}')
+                                    if ((len(self._graphH[vertexh2]) <= len(self._graphG[vertexg2])) and len(self._graphH[vertexh2]) > 0):
+                                        #print(f'Vertex {vertexh2} and {vertexg2} have the SAME #edges')
+                                        if (len(self.solution[vertexh2]) > 0 and vertexg2 in self.solution[vertexh2]) or len(self.solution[vertexh2]) == 0:
+                                            diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
+                                            if diff <= diff0:
+                                                edge = [vertexh1, vertexh2, vertexg1, vertexg2]
+                                                print(f'considered option edge: {edge} with diff: {diff}')
+                                                diff0 = diff
+                                        else:
+                                            print(f'Vertex {vertexh2} is already assigned to {self.solution[vertexh2]}')
+                                    else:
+                                        print(f'Vertex {vertexh2} and {vertexg2} have DIFFERENT #edges')
+                        else:
+                            print(f'Vertex {vertexh1} is already assigned to {self.solution[vertexh1]}')
+                    else:
+                        print(f'Vertex {vertexh1} and {vertexg1} have DIFFERENT #edges')
+            return edge, diff0
 
     def solve(self):
         # While solution is not complete
-        parent = None
+        residual = 0
         while len(self._graphH) > 0:
             # Find the best item to add
-            best_item, parent = self._find_best_candidate(parent)
-            print(f'best item: {best_item}')
+            best_item, diff = self._find_best_candidate()
             # Add the best item to the solution
-            self.solution.append(best_item)    
+            self.edges.append(best_item)
+            self.solution[best_item[0]].add(best_item[2])   
+            self.solution[best_item[1]].add(best_item[3])
             # Remove the item from the items list
             self._remove_edge(best_item[0], best_item[1], self._graphH)
             self._remove_edge(best_item[2], best_item[3], self._graphG)
+            print(f'edges: {self.edges}')
             print(f'solution: {self.solution}')
             print(f'graphH: {self._graphH}')
             print(f'graphG: {self._graphG}')
+            residual += diff
         # Return the solution
 
 if __name__ == "__main__":
