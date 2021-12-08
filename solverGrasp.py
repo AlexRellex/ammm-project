@@ -29,21 +29,11 @@ class SolverGrasp(GraphManager):
                             if len(self._graphH[vertexh2]) <= len(self._graphG[vertexg2]):
                                 diffs.append(abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2]))
                                 edges.append([vertexh1, vertexh2, vertexg1, vertexg2])
-                                print(f'added option edge: {edges[-1]} with diff: {diffs}')
+                                print(f'added option edge: {edges[-1]} with diff: {diffs[-1]}')
                             else:
                                 print(f'Vertex {vertexh2} and {vertexg2} have different #edges')
                 else:
                     print(f'Vertex {vertexh1} and {vertexg1} have different #edges')
-            if len(edges) == 0:
-                return None, None
-            RCL = min(diffs) + self.alpha * (max(diffs) - min(diffs))
-            for diff, edge in diffs, edges:
-                if diff >= RCL:
-                    edges.remove(edge)
-                    diffs.remove(diff)
-            edge = random.choice(edges)
-            diff = diffs[edges.index(edge)]
-            return edge, diff
         else:
             for vertexh1 in list(self.solution):
                 #print(f'vertexh1: {vertexh1}')
@@ -59,11 +49,9 @@ class SolverGrasp(GraphManager):
                                     if ((len(self._graphH[vertexh2]) <= len(self._graphG[vertexg2])) and len(self._graphH[vertexh2]) > 0):
                                         #print(f'Vertex {vertexh2} and {vertexg2} have the SAME #edges')
                                         if (len(self.solution[vertexh2]) > 0 and vertexg2 in self.solution[vertexh2]) or len(self.solution[vertexh2]) == 0:
-                                            diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
-                                            if diff <= diff0:
-                                                edge = [vertexh1, vertexh2, vertexg1, vertexg2]
-                                                print(f'considered option edge: {edge} with diff: {diff}')
-                                                diff0 = diff
+                                            diffs.append(abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2]))
+                                            edges.append([vertexh1, vertexh2, vertexg1, vertexg2])
+                                            print(f'added option edge: {edges[-1]} with diff: {diffs[-1]}')
                                         else:
                                             print(f'Vertex {vertexh2} is already assigned to {self.solution[vertexh2]}')
                                     else:
@@ -72,15 +60,24 @@ class SolverGrasp(GraphManager):
                             print(f'Vertex {vertexh1} is already assigned to {self.solution[vertexh1]}')
                     else:
                         print(f'Vertex {vertexh1} and {vertexg1} have DIFFERENT #edges')
-            if edge is not None:
-                return edge, diff0
-            else:
-                return None, None
+
+        if len(edges) == 0:
+            return None, None
+        RCL = min(diffs) + self.alpha * (max(diffs) - min(diffs))
+        for diff, edge in zip(diffs, edges):
+            if diff >= RCL:
+                edges.remove(edge)
+                diffs.remove(diff)
+        if len(edges) == 0:
+            return None, None
+        edge = random.choice(edges)
+        diff = diffs[edges.index(edge)]
+        return edge, diff
 
     def _find_different_candidate(self):
         """ Find the best candidate to add to the solution """
-        diff0 = 1
-        edge = None
+        diffs = []
+        edges = []
 
         if len(self.solution) == 0:
             min_val = min([len(self._graphH[vertex]) for vertex in self._graphH])
@@ -98,19 +95,14 @@ class SolverGrasp(GraphManager):
                         for vertexg2 in list(self._graphG[vertexg1]):
                             #print(f'vertexg2: {vertexg2}')
                             if len(self._graphH[vertexh2]) <= len(self._graphG[vertexg2]):
-                                diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
-                                if diff <= diff0 and [vertexh1, vertexh2, vertexg1, vertexg2] not in self.used_edges:
-                                    edge = [vertexh1, vertexh2, vertexg1, vertexg2]
-                                    print(f'considered option edge: {edge} with diff: {diff}')
-                                    diff0 = diff
+                                diffs.append(abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2]))
+                                if [vertexh1, vertexh2, vertexg1, vertexg2] not in self.used_edges:
+                                    edges.append([vertexh1, vertexh2, vertexg1, vertexg2])
+                                    print(f'added option edge: {edges[-1]} with diff: {diffs[-1]}')
                             else:
                                 print(f'Vertex {vertexh2} and {vertexg2} have different #edges')
                 else:
                     print(f'Vertex {vertexh1} and {vertexg1} have different #edges')
-            if edge is not None:
-                return edge, diff0
-            else:
-                return None, None
         else:
             for vertexh1 in list(self.solution):
                 #print(f'vertexh1: {vertexh1}')
@@ -126,11 +118,10 @@ class SolverGrasp(GraphManager):
                                     if ((len(self._graphH[vertexh2]) <= len(self._graphG[vertexg2])) and len(self._graphH[vertexh2]) > 0):
                                         #print(f'Vertex {vertexh2} and {vertexg2} have the SAME #edges')
                                         if (len(self.solution[vertexh2]) > 0 and vertexg2 in self.solution[vertexh2]) or len(self.solution[vertexh2]) == 0:
-                                            diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
-                                            if diff <= diff0 and [vertexh1, vertexh2, vertexg1, vertexg2] not in self.used_edges:
-                                                edge = [vertexh1, vertexh2, vertexg1, vertexg2]
-                                                print(f'considered option edge: {edge} with diff: {diff}')
-                                                diff0 = diff
+                                            diffs.append(abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2]))
+                                            if [vertexh1, vertexh2, vertexg1, vertexg2] not in self.used_edges:
+                                                edges.append([vertexh1, vertexh2, vertexg1, vertexg2])
+                                                print(f'added option edge: {edges[-1]} with diff: {diffs[-1]}')
                                         else:
                                             print(f'Vertex {vertexh2} is already assigned to {self.solution[vertexh2]}')
                                     else:
@@ -139,10 +130,19 @@ class SolverGrasp(GraphManager):
                             print(f'Vertex {vertexh1} is already assigned to {self.solution[vertexh1]}')
                     else:
                         print(f'Vertex {vertexh1} and {vertexg1} have DIFFERENT #edges')
-            if edge is not None:
-                return edge, diff0
-            else:
-                return None, None
+
+        if len(edges) == 0:
+            return None, None
+        RCL = min(diffs) + self.alpha * (max(diffs) - min(diffs))
+        for diff, edge in zip(diffs, edges):
+            if diff >= RCL:
+                edges.remove(edge)
+                diffs.remove(diff)
+        if len(edges) == 0:
+            return None, None
+        edge = random.choice(edges)
+        diff = diffs[edges.index(edge)]
+        return edge, diff
 
     def solve(self):
         # While solution is not complete

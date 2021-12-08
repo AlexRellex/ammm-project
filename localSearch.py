@@ -38,10 +38,6 @@ class SolverLocalSearch(GraphManager):
                                 print(f'Vertex {vertexh2} and {vertexg2} have different #edges')
                 else:
                     print(f'Vertex {vertexh1} and {vertexg1} have different #edges')
-            if edge is not None:
-                return edge, diff0
-            else:
-                return None, None
         else:
             for vertexh1 in list(self.solution):
                 #print(f'vertexh1: {vertexh1}')
@@ -70,10 +66,10 @@ class SolverLocalSearch(GraphManager):
                             print(f'Vertex {vertexh1} is already assigned to {self.solution[vertexh1]}')
                     else:
                         print(f'Vertex {vertexh1} and {vertexg1} have DIFFERENT #edges')
-            if edge is not None:
-                return edge, diff0
-            else:
-                return None, None
+        if edge is not None:
+            return edge, diff0
+        else:
+            return None, None
 
     def _find_different_candidate(self):
         """ Find the best candidate to add to the solution """
@@ -105,10 +101,6 @@ class SolverLocalSearch(GraphManager):
                                 print(f'Vertex {vertexh2} and {vertexg2} have different #edges')
                 else:
                     print(f'Vertex {vertexh1} and {vertexg1} have different #edges')
-            if edge is not None:
-                return edge, diff0
-            else:
-                return None, None
         else:
             for vertexh1 in list(self.solution):
                 #print(f'vertexh1: {vertexh1}')
@@ -137,10 +129,10 @@ class SolverLocalSearch(GraphManager):
                             print(f'Vertex {vertexh1} is already assigned to {self.solution[vertexh1]}')
                     else:
                         print(f'Vertex {vertexh1} and {vertexg1} have DIFFERENT #edges')
-            if edge is not None:
-                return edge, diff0
-            else:
-                return None, None
+        if edge is not None:
+            return edge, diff0
+        else:
+            return None, None
 
     def solve(self):
         # While solution is not complete
