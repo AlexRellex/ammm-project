@@ -63,6 +63,8 @@ class SolverGrasp(GraphManager):
 
         if len(edges) == 0:
             return None, None
+        elif len(edges) == 1:
+            return edges[0], diffs[0]
         RCL = min(diffs) + self.alpha * (max(diffs) - min(diffs))
         for diff, edge in zip(diffs, edges):
             if diff >= RCL:
@@ -133,6 +135,8 @@ class SolverGrasp(GraphManager):
 
         if len(edges) == 0:
             return None, None
+        elif len(edges) == 1:
+            return edges[0], diffs[0]
         RCL = min(diffs) + self.alpha * (max(diffs) - min(diffs))
         for diff, edge in zip(diffs, edges):
             if diff >= RCL:
