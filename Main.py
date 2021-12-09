@@ -52,6 +52,7 @@ class AMMMproject:
         greedy = Solver_Greedy(datAttr)
         local = SolverLocalSearch(datAttr, K)
         grasp = SolverGrasp(datAttr, alpha)
+        grasp_solution = None
         with open("results/" + testname + ".csv", 'a', encoding='UTF8', newline='') as f:
             writer = csv.writer(f)
             time0 = time.time()
@@ -63,7 +64,8 @@ class AMMMproject:
             solve_time = time.time() - time0
             writer.writerow([file, "local", local_solution, solve_time, datAttr.n, datAttr.m])
             time0 = time.time()
-            grasp_solution = grasp.solve()
+            while grasp_solution is None:
+                grasp_solution = grasp.solve()
             solve_time = time.time() - time0
             writer.writerow([file, "grasp", grasp_solution, solve_time, datAttr.n, datAttr.m])
     
@@ -118,10 +120,12 @@ class AMMMproject:
                     print(f"Graph G: {datAttr.G}")
                     print(f"Graph H: {datAttr.H}")
                     grasp = SolverGrasp(datAttr, alpha)
+                    grasp_solution = None
                     with open("results/alpha_test.csv", 'a', encoding='UTF8', newline='') as f:
                         writer = csv.writer(f)
                         time0 = time.time()
-                        grasp_solution = grasp.solve()
+                        while grasp_solution is None:
+                            grasp_solution = grasp.solve()
                         solve_time = time.time() - time0
                         writer.writerow([file, alpha, grasp_solution, solve_time, datAttr.n, datAttr.m])
             for file in os.listdir("datafiles"):
@@ -131,10 +135,12 @@ class AMMMproject:
                     print(f"Graph G: {datAttr.G}")
                     print(f"Graph H: {datAttr.H}")
                     grasp = SolverGrasp(datAttr, alpha)
+                    grasp_solution = None
                     with open("results/alpha_data.csv", 'a', encoding='UTF8', newline='') as f:
                         writer = csv.writer(f)
                         time0 = time.time()
-                        grasp_solution = grasp.solve()
+                        while grasp_solution is None:
+                            grasp_solution = grasp.solve()
                         solve_time = time.time() - time0
                         writer.writerow([file, alpha, grasp_solution, solve_time, datAttr.n, datAttr.m])
 
