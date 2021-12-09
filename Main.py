@@ -27,12 +27,12 @@ class AMMMproject:
         for i in range(self.config.max_sv):
             self.K.append(i)
         self.alpha = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-        self.create_csv_header(["file", "algorithm", "solution", "time"], "all_solvers_test")
-        self.create_csv_header(["file", "algorithm", "solution", "time"], "all_solvers_data")
-        self.create_csv_header(["file", "alpha", "solution", "time"], "alpha_test")
-        self.create_csv_header(["file", "alpha", "solution", "time"], "alpha_data")
-        self.create_csv_header(["file", "K", "solution", "time"], "K_test")
-        self.create_csv_header(["file", "K", "solution", "time"], "K_data")
+        self.create_csv_header(["file", "algorithm", "solution", "time","Gsize", "Hsize"], "all_solvers_test")
+        self.create_csv_header(["file", "algorithm", "solution", "time","Gsize", "Hsize"], "all_solvers_data")
+        self.create_csv_header(["file", "alpha", "solution", "time","Gsize", "Hsize"], "alpha_test")
+        self.create_csv_header(["file", "alpha", "solution", "time","Gsize", "Hsize"], "alpha_data")
+        self.create_csv_header(["file", "K", "solution", "time","Gsize", "Hsize"], "K_test")
+        self.create_csv_header(["file", "K", "solution", "time","Gsize", "Hsize"], "K_data")
 
     @staticmethod
     def create_csv_header(header, filename):
@@ -57,15 +57,15 @@ class AMMMproject:
             time0 = time.time()
             greedy_solution = greedy.solve()
             solve_time = time.time() - time0
-            writer.writerow([file, "greedy", greedy_solution, solve_time])
+            writer.writerow([file, "greedy", greedy_solution, solve_time, datAttr.n, datAttr.m])
             time0 = time.time()
             local_solution = local.solve()
             solve_time = time.time() - time0
-            writer.writerow([file, "local", local_solution, solve_time])
+            writer.writerow([file, "local", local_solution, solve_time, datAttr.n, datAttr.m])
             time0 = time.time()
             grasp_solution = grasp.solve()
             solve_time = time.time() - time0
-            writer.writerow([file, "grasp", grasp_solution, solve_time])
+            writer.writerow([file, "grasp", grasp_solution, solve_time, datAttr.n, datAttr.m])
     
     def run_tests(self):
         K = 4
@@ -93,7 +93,7 @@ class AMMMproject:
                         time0 = time.time()
                         local_solution = local.solve()
                         solve_time = time.time() - time0
-                        writer.writerow([file, k, local_solution, solve_time])
+                        writer.writerow([file, k, local_solution, solve_time, datAttr.n, datAttr.m])
 
             for file in os.listdir("datafiles"):
                 if file.endswith(".dat"):
@@ -107,7 +107,7 @@ class AMMMproject:
                         time0 = time.time()
                         local_solution = local.solve()
                         solve_time = time.time() - time0
-                        writer.writerow([file, k, local_solution, solve_time])
+                        writer.writerow([file, k, local_solution, solve_time, datAttr.n, datAttr.m])
     
     def run_alpha_tests(self):
         for alpha in self.alpha:
@@ -123,7 +123,7 @@ class AMMMproject:
                         time0 = time.time()
                         grasp_solution = grasp.solve()
                         solve_time = time.time() - time0
-                        writer.writerow([file, alpha, grasp_solution, solve_time])
+                        writer.writerow([file, alpha, grasp_solution, solve_time, datAttr.n, datAttr.m])
             for file in os.listdir("datafiles"):
                 if file.endswith(".dat"):
                     datAttr = self.parser.decode("datafiles/" + file)
@@ -136,7 +136,7 @@ class AMMMproject:
                         time0 = time.time()
                         grasp_solution = grasp.solve()
                         solve_time = time.time() - time0
-                        writer.writerow([file, alpha, grasp_solution, solve_time])
+                        writer.writerow([file, alpha, grasp_solution, solve_time, datAttr.n, datAttr.m])
 
     def run(self):
         self.run_K_tests()

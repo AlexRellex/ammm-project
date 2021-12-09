@@ -1,8 +1,8 @@
-min_iv = 2;
-max_iv = 4;
-min_ie = 2;
-max_ie = 4;
-min_sv = 2;
-max_sv = 4;
-min_se = 2;
-max_se = 4;
+min_iv = 38;
+max_iv = 40;
+min_ie = 38;
+max_ie = 40;
+min_sv = 38;
+max_sv = 40;
+min_se = 38;
+max_se = 40;
