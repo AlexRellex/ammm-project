@@ -193,9 +193,11 @@ class SolverLocalSearch(GraphManager):
             best_item, diff = self._find_different_candidate()
             # Add the best item to the solution
             if best_item is None:
-                residual = None
                 print('Dead end no other solutions found')
-                break
+                residual = residual2
+                self.solution = self.solution2
+                self.edges = self.edges2
+                return residual
             self.edges.append(best_item)
             self.used_diffs.append(diff)
             self.solution[best_item[0]].add(best_item[2])   
