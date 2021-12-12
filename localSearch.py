@@ -20,14 +20,10 @@ class SolverLocalSearch(GraphManager):
                 if len(self._graphH[vertex]) == min_val:
                     res.append(vertex)
             vertexh1 = res[0]
-            #print(f'vertexh1: {vertexh1}')
             for vertexg1 in list(self._graphG):
-                #print(f'vertexg1: {vertexg1}')
                 if len(self._graphH[vertexh1]) <= len(self._graphG[vertexg1]):
                     for vertexh2 in list(self._graphH[vertexh1]):
-                        #print(f'vertexh2: {vertexh2}')
                         for vertexg2 in list(self._graphG[vertexg1]):
-                            #print(f'vertexg2: {vertexg2}')
                             if len(self._graphH[vertexh2]) <= len(self._graphG[vertexg2]):
                                 diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
                                 if diff <= diff0:
@@ -40,18 +36,12 @@ class SolverLocalSearch(GraphManager):
                     print(f'Vertex {vertexh1} and {vertexg1} have different #edges')
         else:
             for vertexh1 in list(self.solution):
-                #print(f'vertexh1: {vertexh1}')
                 for vertexg1 in list(self.solution[vertexh1]):
-                    #print(f'vertexg1: {vertexg1}')
                     if (len(self._graphH[vertexh1]) <= len(self._graphG[vertexg1])) and len(self._graphH[vertexh1]) > 0:
-                        #print(f'Vertex {vertexh1} and {vertexg1} have the SAME #edges')
                         if ((len(self.solution[vertexh1]) > 0 and vertexg1 in self.solution[vertexh1])) or len(self.solution[vertexh1]) == 0:
                             for vertexh2 in list(self._graphH[vertexh1]):
-                                #print(f'vertexh2: {vertexh2}')
                                 for vertexg2 in list(self._graphG[vertexg1]):
-                                    #print(f'vertexg2: {vertexg2}')
                                     if ((len(self._graphH[vertexh2]) <= len(self._graphG[vertexg2])) and len(self._graphH[vertexh2]) > 0):
-                                        #print(f'Vertex {vertexh2} and {vertexg2} have the SAME #edges')
                                         if (len(self.solution[vertexh2]) > 0 and vertexg2 in self.solution[vertexh2]) or len(self.solution[vertexh2]) == 0:
                                             diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
                                             if diff <= diff0:
@@ -83,14 +73,10 @@ class SolverLocalSearch(GraphManager):
                 if len(self._graphH[vertex]) == min_val:
                     res.append(vertex)
             vertexh1 = res[0]
-            #print(f'vertexh1: {vertexh1}')
             for vertexg1 in list(self._graphG):
-                #print(f'vertexg1: {vertexg1}')
                 if len(self._graphH[vertexh1]) <= len(self._graphG[vertexg1]):
                     for vertexh2 in list(self._graphH[vertexh1]):
-                        #print(f'vertexh2: {vertexh2}')
                         for vertexg2 in list(self._graphG[vertexg1]):
-                            #print(f'vertexg2: {vertexg2}')
                             if len(self._graphH[vertexh2]) <= len(self._graphG[vertexg2]):
                                 diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
                                 if diff <= diff0 and [vertexh1, vertexh2, vertexg1, vertexg2] not in self.used_edges:
@@ -103,18 +89,12 @@ class SolverLocalSearch(GraphManager):
                     print(f'Vertex {vertexh1} and {vertexg1} have different #edges')
         else:
             for vertexh1 in list(self.solution):
-                #print(f'vertexh1: {vertexh1}')
                 for vertexg1 in list(self.solution[vertexh1]):
-                    #print(f'vertexg1: {vertexg1}')
                     if (len(self._graphH[vertexh1]) <= len(self._graphG[vertexg1])) and len(self._graphH[vertexh1]) > 0:
-                        #print(f'Vertex {vertexh1} and {vertexg1} have the SAME #edges')
                         if ((len(self.solution[vertexh1]) > 0 and vertexg1 in self.solution[vertexh1])) or len(self.solution[vertexh1]) == 0:
                             for vertexh2 in list(self._graphH[vertexh1]):
-                                #print(f'vertexh2: {vertexh2}')
                                 for vertexg2 in list(self._graphG[vertexg1]):
-                                    #print(f'vertexg2: {vertexg2}')
                                     if ((len(self._graphH[vertexh2]) <= len(self._graphG[vertexg2])) and len(self._graphH[vertexh2]) > 0):
-                                        #print(f'Vertex {vertexh2} and {vertexg2} have the SAME #edges')
                                         if (len(self.solution[vertexh2]) > 0 and vertexg2 in self.solution[vertexh2]) or len(self.solution[vertexh2]) == 0:
                                             diff = abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2])
                                             if diff <= diff0 and [vertexh1, vertexh2, vertexg1, vertexg2] not in self.used_edges:

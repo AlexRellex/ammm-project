@@ -4,20 +4,27 @@ import numpy as np
 from time import time
 import os
 
+def plot_bias(df, bias): # bias = K or alpha
+    df['load'] =  df['Gsize'] / df['Hsize']  
+    files = df['file'].unique()
+    for f in files:
+        df2 = df.loc[df['file'] == f]
+        df2 = df2.sort_values(by=[bias])
+        df2.plot(x=bias, y='solution', kind='bar', title= bias + ' vs. solution')
+        plt.savefig('graphics/' + bias + '_'+ f + '.png')
+
+def plot_algorithms(df): # bias = K or alpha
+    df['load'] =  df['Gsize'] / df['Hsize']  
+    files = df['file'].unique()
+    for f in files:
+        df2 = df.loc[df['file'] == f]
+        df2 = df2.sort_values(by=["algorithm"])
+        df2.plot(x='algorithm', y='solution', kind='bar', title= 'algorithm vs. solution')
+        plt.savefig('graphics/alforithms_' + f + '.png')
+
 if __name__ == '__main__':
     # Read data
     #for file in os.listdir("results"):
-    file = "alpha_data"
+    file = "alpha_test"
     df = pd.read_csv('results/' + file + '.csv')
-    #greedy = df[df['algorithm'] == 'greedy']
-    ##greedy['load'] =  greedy['Gsize'] / greedy['Hsize']
-    #greedy = greedy.sort_values(by=['time'])
-    #local = df[df['algorithm'] == 'local']
-    ##local['load'] =  local['Gsize'] / local['Hsize']
-    #local = local.sort_values(by=['time'])
-    ## Plot
-    df['load'] =  df['Gsize'] / df['Hsize']
-    df = df.sort_values(by=['solution'])
-    df.plot(x='alpha', y='solution', kind='bar', title='Time vs. Gsize')
-
-    plt.show()
+    plot_bias(df, "alpha")

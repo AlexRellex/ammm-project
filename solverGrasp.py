@@ -18,14 +18,10 @@ class SolverGrasp(GraphManager):
                 if len(self._graphH[vertex]) == min_val:
                     res.append(vertex)
             vertexh1 = res[0]
-            #print(f'vertexh1: {vertexh1}')
             for vertexg1 in list(self._graphG):
-                #print(f'vertexg1: {vertexg1}')
                 if len(self._graphH[vertexh1]) <= len(self._graphG[vertexg1]):
                     for vertexh2 in list(self._graphH[vertexh1]):
-                        #print(f'vertexh2: {vertexh2}')
                         for vertexg2 in list(self._graphG[vertexg1]):
-                            #print(f'vertexg2: {vertexg2}')
                             if len(self._graphH[vertexh2]) <= len(self._graphG[vertexg2]):
                                 diffs.append(abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2]))
                                 edges.append([vertexh1, vertexh2, vertexg1, vertexg2])
@@ -36,18 +32,12 @@ class SolverGrasp(GraphManager):
                     print(f'Vertex {vertexh1} and {vertexg1} have different #edges')
         else:
             for vertexh1 in list(self.solution):
-                #print(f'vertexh1: {vertexh1}')
                 for vertexg1 in list(self.solution[vertexh1]):
-                    #print(f'vertexg1: {vertexg1}')
                     if (len(self._graphH[vertexh1]) <= len(self._graphG[vertexg1])) and len(self._graphH[vertexh1]) > 0:
-                        #print(f'Vertex {vertexh1} and {vertexg1} have the SAME #edges')
                         if ((len(self.solution[vertexh1]) > 0 and vertexg1 in self.solution[vertexh1])) or len(self.solution[vertexh1]) == 0:
                             for vertexh2 in list(self._graphH[vertexh1]):
-                                #print(f'vertexh2: {vertexh2}')
                                 for vertexg2 in list(self._graphG[vertexg1]):
-                                    #print(f'vertexg2: {vertexg2}')
                                     if ((len(self._graphH[vertexh2]) <= len(self._graphG[vertexg2])) and len(self._graphH[vertexh2]) > 0):
-                                        #print(f'Vertex {vertexh2} and {vertexg2} have the SAME #edges')
                                         if (len(self.solution[vertexh2]) > 0 and vertexg2 in self.solution[vertexh2]) or len(self.solution[vertexh2]) == 0:
                                             diffs.append(abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2]))
                                             edges.append([vertexh1, vertexh2, vertexg1, vertexg2])
@@ -88,14 +78,10 @@ class SolverGrasp(GraphManager):
                 if len(self._graphH[vertex]) == min_val:
                     res.append(vertex)
             vertexh1 = res[0]
-            #print(f'vertexh1: {vertexh1}')
             for vertexg1 in list(self._graphG):
-                #print(f'vertexg1: {vertexg1}')
                 if len(self._graphH[vertexh1]) <= len(self._graphG[vertexg1]):
                     for vertexh2 in list(self._graphH[vertexh1]):
-                        #print(f'vertexh2: {vertexh2}')
                         for vertexg2 in list(self._graphG[vertexg1]):
-                            #print(f'vertexg2: {vertexg2}')
                             if len(self._graphH[vertexh2]) <= len(self._graphG[vertexg2]):
                                 diffs.append(abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2]))
                                 if [vertexh1, vertexh2, vertexg1, vertexg2] not in self.used_edges:
@@ -107,23 +93,17 @@ class SolverGrasp(GraphManager):
                     print(f'Vertex {vertexh1} and {vertexg1} have different #edges')
         else:
             for vertexh1 in list(self.solution):
-                #print(f'vertexh1: {vertexh1}')
                 for vertexg1 in list(self.solution[vertexh1]):
-                    #print(f'vertexg1: {vertexg1}')
                     if (len(self._graphH[vertexh1]) <= len(self._graphG[vertexg1])) and len(self._graphH[vertexh1]) > 0:
-                        #print(f'Vertex {vertexh1} and {vertexg1} have the SAME #edges')
                         if ((len(self.solution[vertexh1]) > 0 and vertexg1 in self.solution[vertexh1])) or len(self.solution[vertexh1]) == 0:
                             for vertexh2 in list(self._graphH[vertexh1]):
-                                #print(f'vertexh2: {vertexh2}')
                                 for vertexg2 in list(self._graphG[vertexg1]):
-                                    #print(f'vertexg2: {vertexg2}')
                                     if ((len(self._graphH[vertexh2]) <= len(self._graphG[vertexg2])) and len(self._graphH[vertexh2]) > 0):
-                                        #print(f'Vertex {vertexh2} and {vertexg2} have the SAME #edges')
                                         if (len(self.solution[vertexh2]) > 0 and vertexg2 in self.solution[vertexh2]) or len(self.solution[vertexh2]) == 0:
                                             diffs.append(abs(self.datAttr.H[vertexh1][vertexh2] - self.datAttr.G[vertexg1][vertexg2]))
                                             if [vertexh1, vertexh2, vertexg1, vertexg2] not in self.used_edges:
                                                 edges.append([vertexh1, vertexh2, vertexg1, vertexg2])
-                                                print(f'added option edge: {edges[-1]} with diff: {diffs[-1]}')
+                                                #print(f'added option edge: {edges[-1]} with diff: {diffs[-1]}')
                                         else:
                                             print(f'Vertex {vertexh2} is already assigned to {self.solution[vertexh2]}')
                                     else:
