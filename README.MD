@@ -10,3 +10,5 @@ Use args:
 **tests** (for running the provided .dat files)
 
 **data** (for running custom .dat files on datafiles/ folder)
+
+**NOTE: OPL files on the OPL project/IPL_solution folder**
