@@ -13,8 +13,6 @@ class AMMMproject:
         self.parser = DATParser()
         self.config = self.parser.parse(self.configFile)
         self.K = []
-        for i in range(self.config.max_sv):
-            self.K.append(i)
         self.alpha = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
         self.create_csv_header(["file", "algorithm", "solution", "time","Gsize", "Hsize"], "all_solvers_test")
         self.create_csv_header(["file", "algorithm", "solution", "time","Gsize", "Hsize"], "all_solvers_data")
@@ -88,10 +86,13 @@ class AMMMproject:
                 self.run_all_solvers(file, datAttr, K, alpha, "all_solvers_data")
 
     def run_K_tests(self):
-        for k in self.K:
-            for file in os.listdir("testfiles"):
-                if file.endswith(".dat"):
-                    datAttr = self.parser.decode("testfiles/" + file)
+        for file in os.listdir("testfiles"):
+            if file.endswith(".dat"):
+                datAttr = self.parser.decode("testfiles/" + file)
+                self.K = []
+                for i in range(len(datAttr.H)):
+                    self.K.append(i)
+                for k in self.K:
                     print("Running Solvers for file %s" % file)
                     print(f"Graph G: {datAttr.G}")
                     print(f"Graph H: {datAttr.H}")
@@ -104,10 +105,13 @@ class AMMMproject:
                         writer.writerow([file, k, local_solution, solve_time, datAttr.n, datAttr.m])
     
     def run_K_data(self):
-        for k in self.K:
-            for file in os.listdir("datafiles"):
-                if file.endswith(".dat"):
-                    datAttr = self.parser.decode("datafiles/" + file)
+        for file in os.listdir("datafiles"):
+            if file.endswith(".dat"):
+                datAttr = self.parser.decode("datafiles/" + file)
+                self.K = []
+                for i in range(len(datAttr.H)):
+                    self.K.append(i)
+                for k in self.K:
                     print("Running Solvers for file %s" % file)
                     print(f"Graph G: {datAttr.G}")
                     print(f"Graph H: {datAttr.H}")

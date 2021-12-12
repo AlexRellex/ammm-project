@@ -10,7 +10,7 @@ def plot_bias(df, bias): # bias = K or alpha
     for f in files:
         df2 = df.loc[df['file'] == f]
         df2 = df2.sort_values(by=[bias])
-        df2.plot(x=bias, y='solution', kind='bar', title= bias + ' vs. solution')
+        df2.plot(x=bias, y='solution', kind='bar', title= bias + ' vs. solution '+ f)
         plt.savefig('graphics/' + bias + '_'+ f + '.png')
 
 def plot_algorithms(df): # bias = K or alpha
@@ -19,12 +19,12 @@ def plot_algorithms(df): # bias = K or alpha
     for f in files:
         df2 = df.loc[df['file'] == f]
         df2 = df2.sort_values(by=["algorithm"])
-        df2.plot(x='algorithm', y='solution', kind='bar', title= 'algorithm vs. solution')
+        df2.plot(x='algorithm', y='solution', kind='bar', title= 'algorithm vs. solution '+ f)
         plt.savefig('graphics/alforithms_' + f + 'solution.png')
     for f in files:
         df2 = df.loc[df['file'] == f]
         df2 = df2.sort_values(by=["algorithm"])
-        df2.plot(x='algorithm', y='time', kind='bar', title= 'algorithm vs. time')
+        df2.plot(x='algorithm', y='time', kind='bar', title= 'algorithm vs. time '+ f)
         plt.savefig('graphics/alforithms_' + f + 'time.png')
 
 if __name__ == '__main__':
