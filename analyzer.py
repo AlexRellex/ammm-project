@@ -20,11 +20,22 @@ def plot_algorithms(df): # bias = K or alpha
         df2 = df.loc[df['file'] == f]
         df2 = df2.sort_values(by=["algorithm"])
         df2.plot(x='algorithm', y='solution', kind='bar', title= 'algorithm vs. solution')
-        plt.savefig('graphics/alforithms_' + f + '.png')
+        plt.savefig('graphics/alforithms_' + f + 'solution.png')
+    for f in files:
+        df2 = df.loc[df['file'] == f]
+        df2 = df2.sort_values(by=["algorithm"])
+        df2.plot(x='algorithm', y='time', kind='bar', title= 'algorithm vs. time')
+        plt.savefig('graphics/alforithms_' + f + 'time.png')
 
 if __name__ == '__main__':
     # Read data
     #for file in os.listdir("results"):
+    file = "k_test"
+    df = pd.read_csv('results/' + file + '.csv')
+    plot_bias(df, "K")
     file = "alpha_test"
     df = pd.read_csv('results/' + file + '.csv')
     plot_bias(df, "alpha")
+    file = "all_solvers_test"
+    df = pd.read_csv('results/' + file + '.csv')
+    plot_algorithms(df)

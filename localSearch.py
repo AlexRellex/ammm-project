@@ -200,7 +200,7 @@ class SolverLocalSearch(GraphManager):
 
 if __name__ == "__main__":
     parser = DATParser()
-    datAttr = parser.decode("project.9.dat")
+    datAttr = parser.decode("datafiles/config-12_12-4_4.dat")
     solver = SolverLocalSearch(datAttr, 30)
     residual = solver.solve()
     if residual is None:

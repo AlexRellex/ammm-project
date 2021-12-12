@@ -9,20 +9,9 @@ from solverGrasp import SolverGrasp
 
 class AMMMproject:
     def __init__(self, configFile):
-        try:
-            print("Reading Config file %s" % configFile)
-            self.parser = DATParser()
-            self.config = self.parser.parse(configFile)
-            print("Config file parsed")
-            ValidateConfig.validate(self.config)
-            print("Creating Instances")
-            self.insGen = InstanceGenerator(self.config)
-            status = self.insGen.generate()
-            if status:
-                raise AMMMException("Could not generate instances, not feasible instances found")
-        except AMMMException as e:
-            print("Exception: %s", e)
-            sys.exit(1)
+        self.configFile = configFile
+        self.parser = DATParser()
+        self.config = self.parser.parse(self.configFile)
         self.K = []
         for i in range(self.config.max_sv):
             self.K.append(i)
@@ -33,6 +22,20 @@ class AMMMproject:
         self.create_csv_header(["file", "alpha", "solution", "time","Gsize", "Hsize"], "alpha_data")
         self.create_csv_header(["file", "K", "solution", "time","Gsize", "Hsize"], "K_test")
         self.create_csv_header(["file", "K", "solution", "time","Gsize", "Hsize"], "K_data")
+
+    def generate_datafiles(self):
+        print("generating data")
+        try:
+            print("Config file parsed")
+            ValidateConfig.validate(self.config)
+            print("Creating Instances")
+            self.insGen = InstanceGenerator(self.config)
+            status = self.insGen.generate()
+            if status:
+                raise AMMMException("Could not generate instances, not feasible instances found")
+        except AMMMException as e:
+            print("Exception: %s", e)
+            sys.exit(1)
 
     @staticmethod
     def create_csv_header(header, filename):
@@ -64,8 +67,7 @@ class AMMMproject:
             solve_time = time.time() - time0
             writer.writerow([file, "local", local_solution, solve_time, datAttr.n, datAttr.m])
             time0 = time.time()
-            while grasp_solution is None:
-                grasp_solution = grasp.solve()
+            grasp_solution = grasp.solve()
             solve_time = time.time() - time0
             writer.writerow([file, "grasp", grasp_solution, solve_time, datAttr.n, datAttr.m])
     
@@ -75,11 +77,15 @@ class AMMMproject:
         for file in os.listdir("testfiles"):
             if file.endswith(".dat"):
                 datAttr = self.parser.decode("testfiles/" + file)
-                self.run_all_solvers("testfiles/" + file, datAttr, K, alpha, "all_solvers_test")
+                self.run_all_solvers(file, datAttr, K, alpha, "all_solvers_test")
+
+    def run_data(self):
+        K = 4
+        alpha = 0.5
         for file in os.listdir("datafiles"):
             if file.endswith(".dat"):
                 datAttr = self.parser.decode("datafiles/" + file)
-                self.run_all_solvers("datafiles/" + file, datAttr, K, alpha, "all_solvers_data")
+                self.run_all_solvers(file, datAttr, K, alpha, "all_solvers_data")
 
     def run_K_tests(self):
         for k in self.K:
@@ -96,7 +102,9 @@ class AMMMproject:
                         local_solution = local.solve()
                         solve_time = time.time() - time0
                         writer.writerow([file, k, local_solution, solve_time, datAttr.n, datAttr.m])
-
+    
+    def run_K_data(self):
+        for k in self.K:
             for file in os.listdir("datafiles"):
                 if file.endswith(".dat"):
                     datAttr = self.parser.decode("datafiles/" + file)
@@ -110,7 +118,7 @@ class AMMMproject:
                         local_solution = local.solve()
                         solve_time = time.time() - time0
                         writer.writerow([file, k, local_solution, solve_time, datAttr.n, datAttr.m])
-    
+
     def run_alpha_tests(self):
         for alpha in self.alpha:
             for file in os.listdir("testfiles"):
@@ -124,10 +132,12 @@ class AMMMproject:
                     with open("results/alpha_test.csv", 'a', encoding='UTF8', newline='') as f:
                         writer = csv.writer(f)
                         time0 = time.time()
-                        while grasp_solution is None:
-                            grasp_solution = grasp.solve()
+                        grasp_solution = grasp.solve()
                         solve_time = time.time() - time0
                         writer.writerow([file, alpha, grasp_solution, solve_time, datAttr.n, datAttr.m])
+        
+    def run_alpha_data(self):
+        for alpha in self.alpha:
             for file in os.listdir("datafiles"):
                 if file.endswith(".dat"):
                     datAttr = self.parser.decode("datafiles/" + file)
@@ -139,16 +149,38 @@ class AMMMproject:
                     with open("results/alpha_data.csv", 'a', encoding='UTF8', newline='') as f:
                         writer = csv.writer(f)
                         time0 = time.time()
-                        while grasp_solution is None:
-                            grasp_solution = grasp.solve()
+                        grasp_solution = grasp.solve()
                         solve_time = time.time() - time0
                         writer.writerow([file, alpha, grasp_solution, solve_time, datAttr.n, datAttr.m])
 
-    def run(self):
-        self.run_K_tests()
-        self.run_alpha_tests()
-        self.run_tests()
+    def run(self, flag):
+        if flag == "genfiles":
+            self.generate_datafiles()
+        elif flag == "tests":
+            self.run_K_tests()
+            self.run_alpha_tests()
+            self.run_tests()
+        elif flag == "data":
+            if len(os.listdir("datafiles/")) == 0:
+                print("\nNo data on datafiles/")
+            else:
+                self.run_K_data()
+                self.run_alpha_data()
+                self.run_data()
 
 if __name__ == '__main__':
     main = AMMMproject("configfiles/config.dat")
-    sys.exit(main.run())
+    if len(sys.argv) > 1:
+        flag = sys.argv[1]
+    else:
+        flag = "foo"
+    
+    if flag == "genfiles" or flag == "tests" or flag == "data":
+        sys.exit(main.run(flag))
+    else:
+        print("\nWRONG ARGS PROVIDED")
+        print("Use args:")
+        print("genfiles (for instance generation)")
+        print("tests (for running the provided .dat files)")
+        print("data (for running custom .dat files on datafiles/ folder)")
+
