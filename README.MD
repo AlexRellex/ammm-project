@@ -11,4 +11,7 @@ Use args:
 
 **data** (for running custom .dat files on datafiles/ folder)
 
+
+All the results are stored on .csv files on the results/ folder
+
 **NOTE: OPL files on the OPL project/IPL_solution folder**

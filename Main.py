@@ -14,12 +14,6 @@ class AMMMproject:
         self.config = self.parser.parse(self.configFile)
         self.K = []
         self.alpha = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-        self.create_csv_header(["file", "algorithm", "solution", "time","Gsize", "Hsize"], "all_solvers_test")
-        self.create_csv_header(["file", "algorithm", "solution", "time","Gsize", "Hsize"], "all_solvers_data")
-        self.create_csv_header(["file", "alpha", "solution", "time","Gsize", "Hsize"], "alpha_test")
-        self.create_csv_header(["file", "alpha", "solution", "time","Gsize", "Hsize"], "alpha_data")
-        self.create_csv_header(["file", "K", "solution", "time","Gsize", "Hsize"], "K_test")
-        self.create_csv_header(["file", "K", "solution", "time","Gsize", "Hsize"], "K_data")
 
     def generate_datafiles(self):
         print("generating data")
@@ -161,6 +155,9 @@ class AMMMproject:
         if flag == "genfiles":
             self.generate_datafiles()
         elif flag == "tests":
+            self.create_csv_header(["file", "algorithm", "solution", "time","Gsize", "Hsize"], "all_solvers_test")
+            self.create_csv_header(["file", "alpha", "solution", "time","Gsize", "Hsize"], "alpha_test")
+            self.create_csv_header(["file", "K", "solution", "time","Gsize", "Hsize"], "K_test")
             self.run_K_tests()
             self.run_alpha_tests()
             self.run_tests()
@@ -168,6 +165,9 @@ class AMMMproject:
             if len(os.listdir("datafiles/")) == 0:
                 print("\nNo data on datafiles/")
             else:
+                self.create_csv_header(["file", "algorithm", "solution", "time","Gsize", "Hsize"], "all_solvers_data")
+                self.create_csv_header(["file", "alpha", "solution", "time","Gsize", "Hsize"], "alpha_data")
+                self.create_csv_header(["file", "K", "solution", "time","Gsize", "Hsize"], "K_data")
                 self.run_K_data()
                 self.run_alpha_data()
                 self.run_data()
