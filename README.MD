@@ -1,7 +1,7 @@
 # INSTRUCTIONS
 Execute Main()
 
-**NOTE: Couldn't make Instance Generator work, it produces non feasible graphs on high numbers,**
+**NOTE: Couldn't make Instance Generator work, it produces non feasible graphs on high numbers.**
 **You can still check the code in InstanceGenerator.py and ValidateConfig.py**
 
 Use args:
